@@ -26,7 +26,12 @@ export function ImpersonationReport({ data }: ImpersonationReportProps) {
   const { nameguard_result } = data;
 
   if (!nameguard_result)
-    return <RatingLoadingIcon size={RatingIconSize.micro} />;
+    return (
+      <RatingLoadingIcon
+        className="animate-pulse"
+        size={RatingIconSize.micro}
+      />
+    );
 
   const textClass = cc([
     "font-semibold",

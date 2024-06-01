@@ -8,11 +8,11 @@ import {
 import cc from "classcat";
 
 import { Tooltip } from "../Tooltip/Tooltip";
-import { RatingLoadingIcon } from "../icons/RatingLoadingIcon";
 import { RatingIcon, RatingIconSize } from "../Report/RatingIcon";
 import { checkResultCodeTextColor, ratingTextColor } from "../../utils/text";
 import { ENSName } from "@namehash/ens-utils";
 import { UnknownReportIcon } from "../UnknownReportIcon/UnknownReportIcon";
+import { LoadingReportIcon } from "../LoadingReportIcon/LoadingReportIcon";
 
 type ReportShieldProps = {
   onClickOverride?: (ensName: ENSName) => void;
@@ -67,28 +67,18 @@ export function ReportIcon({
     return (
       <UnknownReportIcon
         size={size}
-        onClick={onClickHandler}
         className="cursor-pointer"
-      >
-        <div className="text-sm text-white">
-          <button
-            className="appearance-none underline font-medium"
-            onClick={onClickHandler}
-          >
-            Inspect name for details
-          </button>
-        </div>
-      </UnknownReportIcon>
+        onClickHandler={onClickHandler}
+      />
     );
   }
 
   if (!data) {
     return (
-      <RatingLoadingIcon
-        onClick={onClickHandler}
-        className={cc([props.className, " cursor-pointer"])}
+      <LoadingReportIcon
         size={size}
-        {...props}
+        onClickHandler={onClickHandler}
+        className="cursor-pointer animate-pulse"
       />
     );
   }

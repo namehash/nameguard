@@ -1,16 +1,16 @@
 import React from "react";
 
-import { RatingIcon, RatingIconSize } from "../Report/RatingIcon";
 import { Tooltip } from "../Tooltip/Tooltip";
-import { RatingUnknownIcon } from "../icons/RatingUnknownIcon";
 import { ENSName } from "@namehash/ens-utils";
+import { RatingIcon, RatingIconSize } from "../Report/RatingIcon";
+import { RatingLoadingIcon } from "../icons/RatingLoadingIcon";
 
-type UnknownShieldProps = {
+type LoadingReportIconProps = {
   onClickOverride?: (ensName: ENSName) => void;
   size?: RatingIconSize;
 } & React.ComponentProps<typeof RatingIcon>;
 
-export const UnknownReportIcon = ({
+export const LoadingReportIcon = ({
   onClickHandler,
   size = RatingIconSize.small,
 
@@ -22,24 +22,23 @@ export const UnknownReportIcon = ({
     displays the tooltip with the report information.
   */
   ...props
-}: UnknownShieldProps) => {
+}: LoadingReportIconProps) => {
   return (
     <Tooltip
-      trigger={RatingUnknownIcon({
+      trigger={RatingLoadingIcon({
         size,
-        isInteractive: true,
         ...props,
       })}
     >
       <div className="flex items-start space-x-3 py-2.5 max-w-[300px]">
         <div className="mt-0.5">
-          <RatingUnknownIcon size={RatingIconSize.small} />
+          <RatingLoadingIcon fill="#CFCFCF" size={RatingIconSize.small} />
         </div>
 
         <div className="flex-1">
           <div className="flex items-center justify-between">
             <span className="font-semibold mb-1 text-white">
-              Error loading report
+              Loading report...
             </span>
           </div>
 

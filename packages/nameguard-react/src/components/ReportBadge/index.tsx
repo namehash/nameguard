@@ -7,9 +7,10 @@ import React, { useEffect, useState, useRef } from "react";
 import cc from "classcat";
 
 import { ReportIcon } from "../ReportIcon/index";
-import { RatingLoadingIcon, RatingIconSize, Tooltip } from "../..";
+import { RatingIconSize, Tooltip } from "../..";
 import { UnknownReportIcon } from "../UnknownReportIcon/UnknownReportIcon";
 import { ENSName } from "@namehash/ens-utils";
+import { LoadingReportIcon } from "../LoadingReportIcon/LoadingReportIcon";
 
 interface ReportBadgeProps {
   /*
@@ -145,21 +146,12 @@ export function ReportBadge({
         <UnknownReportIcon
           size={RatingIconSize.micro}
           className="cursor-pointer"
-        >
-          <div className="text-sm text-white">
-            <button
-              className="appearance-none underline font-medium"
-              onClick={onClickHandler}
-            >
-              Inspect name for details
-            </button>
-          </div>
-        </UnknownReportIcon>
+        />
       ) : !data ? (
         // Loading Rating
-        <RatingLoadingIcon
+        <LoadingReportIcon
           size={RatingIconSize.micro}
-          className="cursor-pointer"
+          className="cursor-pointer animate-pulse"
         />
       ) : (
         // Known Rating

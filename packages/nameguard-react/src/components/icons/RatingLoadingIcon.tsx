@@ -9,7 +9,9 @@ import React from "react";
 export const RatingLoadingIcon = ({
   size,
   ...props
-}: { size: RatingIconSize } & React.ComponentProps) => {
+}: {
+  size: RatingIconSize;
+} & React.ComponentProps) => {
   switch (size) {
     case RatingIconSize.large:
       return <RatingLoadingLargeIcon {...props} />;

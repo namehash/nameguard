@@ -1,10 +1,10 @@
 import React from "react";
 
-import { RatingIcon, RatingIconSize } from "./RatingIcon";
+import { RatingIconSize } from "./RatingIcon";
 import { ReportFormattedDisplayName } from "./ReportFormattedName";
 import { ReportChangesApplied } from "./ReportChangesApplied";
-import { ParsedName } from "@namehash/ens-utils";
 import { RatingLoadingIcon } from "../icons/RatingLoadingIcon";
+import { ParsedName } from "@namehash/ens-utils";
 
 type LoadingSkeletonProps = {
   parsedName: ParsedName;
@@ -37,7 +37,10 @@ export const LoadingSkeleton = ({ parsedName }: LoadingSkeletonProps) => {
           )}
         </div>
         <div className="flex items-start space-x-4 pt-5 md:pt-0 md:w-2/6">
-          <RatingLoadingIcon size={RatingIconSize.large} />
+          <RatingLoadingIcon
+            className="animate-pulse"
+            size={RatingIconSize.large}
+          />
           <div className="space-y-1 flex-shrink-0">
             <p className="font-semibold text-sm md:text-2xl text-gray-500">
               Inspecting...
