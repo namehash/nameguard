@@ -18,7 +18,7 @@ import { checkResultCodeTextColor } from "../../utils/text";
 import { buildENSName } from "@namehash/ens-utils";
 
 type ShareProps = {
-  name?: string;
+  name: string;
 };
 
 function createTwitterLink(name: string) {
