@@ -6,12 +6,14 @@ import { RatingIcon, RatingIconSize } from "../Report/RatingIcon";
 import { RatingLoadingIcon } from "../icons/RatingLoadingIcon";
 
 type ReportLoadingIconProps = {
-  onClickOverride?: (ensName: ENSName) => void;
+  onIconClickOverride?: (ensName: ENSName) => void;
+  onTooltipClickOverride?: (ensName: ENSName) => void;
   size?: RatingIconSize;
 } & React.ComponentProps<typeof RatingIcon>;
 
 export const ReportLoadingIcon = ({
-  onClickHandler,
+  onIconClickOverride,
+  onTooltipClickOverride,
   size = RatingIconSize.small,
 
   /*
@@ -27,13 +29,16 @@ export const ReportLoadingIcon = ({
     <Tooltip
       trigger={RatingLoadingIcon({
         size,
-        onClick: onClickHandler,
+        onClick: (e?: React.MouseEvent<HTMLElement>) => {
+          if (e) e.stopPropagation();
+          onIconClickOverride();
+        },
         ...props,
       })}
     >
       <div className="flex items-start space-x-3 py-2.5 max-w-[300px]">
         <div className="mt-0.5">
-          <RatingLoadingIcon fill="#CFCFCF" size={RatingIconSize.small} />
+          <RatingLoadingIcon fill="#dddddd" size={RatingIconSize.small} />
         </div>
 
         <div className="flex-1">
@@ -46,7 +51,10 @@ export const ReportLoadingIcon = ({
           <div className="text-sm text-white">
             <button
               className="appearance-none underline font-medium"
-              onClick={onClickHandler}
+              onClick={(e?: React.MouseEvent<HTMLElement>) => {
+                if (e) e.stopPropagation();
+                onTooltipClickOverride();
+              }}
             >
               Inspect name for details
             </button>

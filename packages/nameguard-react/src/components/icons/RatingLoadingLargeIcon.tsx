@@ -4,7 +4,7 @@ export const RatingLoadingLargeIcon = (
   props: React.SVGProps<SVGSVGElement>,
 ) => (
   <>
-    <div className="hidden lg:block">
+    <div className="hidden lg:block animate-pulse">
       <svg
         width="68"
         height="71"

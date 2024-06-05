@@ -17,7 +17,8 @@ import { ReportUnknownIcon } from "../ReportUnknownIcon/ReportUnknownIcon";
 import { ReportLoadingIcon } from "../ReportLoadingIcon/ReportLoadingIcon";
 
 type ReportShieldProps = {
-  onClickOverride?: (ensName: ENSName) => void;
+  onIconClickOverride?: (ensName: ENSName) => void;
+  onTooltipClickOverride?: (ensName: ENSName) => void;
 
   /*
     The data prop is the consolidated report for the ensName.
@@ -40,11 +41,17 @@ declare global {
   }
 }
 
+enum ClickHandlerFor {
+  icon,
+  tooltip,
+}
+
 export function ReportIcon({
-  ensName,
   data,
-  onClickOverride,
+  ensName,
   hadLoadingError,
+  onIconClickOverride,
+  onTooltipClickOverride,
   size = RatingIconSize.small,
 
   /*
@@ -56,11 +63,27 @@ export function ReportIcon({
   */
   ...props
 }: ReportShieldProps) {
-  const onClickHandler = () => {
-    if (onClickOverride) onClickOverride(ensName);
-    else {
-      window.location.href = getNameGuardURLForENSname(ensName);
+  const onClickHandler = (clickHandlerFor: ClickHandlerFor) => {
+    switch (clickHandlerFor) {
+      case ClickHandlerFor.icon:
+        if (onIconClickOverride) {
+          onIconClickOverride(ensName);
+        } else {
+          redirectUserToNameGuardInspectPage(ensName);
+        }
+        break;
+      case ClickHandlerFor.tooltip:
+        if (onTooltipClickOverride) {
+          onTooltipClickOverride(ensName);
+        } else {
+          redirectUserToNameGuardInspectPage(ensName);
+        }
+        break;
     }
+  };
+
+  const redirectUserToNameGuardInspectPage = (ensName: ENSName) => {
+    window.location.href = getNameGuardURLForENSname(ensName);
   };
 
   if (hadLoadingError) {
@@ -68,7 +91,14 @@ export function ReportIcon({
       <ReportUnknownIcon
         size={size}
         className="cursor-pointer"
-        onClickHandler={onClickHandler}
+        onIconClickOverride={(e?: React.MouseEvent<HTMLElement>) => {
+          if (e) e.stopPropagation();
+          onClickHandler(ClickHandlerFor.icon);
+        }}
+        onTooltipClickOverride={(e?: React.MouseEvent<HTMLElement>) => {
+          if (e) e.stopPropagation();
+          onClickHandler(ClickHandlerFor.tooltip);
+        }}
       />
     );
   }
@@ -77,8 +107,15 @@ export function ReportIcon({
     return (
       <ReportLoadingIcon
         size={size}
-        onClickHandler={onClickHandler}
-        className="cursor-pointer animate-pulse"
+        className="cursor-pointer"
+        onIconClickOverride={(e?: React.MouseEvent<HTMLElement>) => {
+          if (e) e.stopPropagation();
+          onClickHandler(ClickHandlerFor.icon);
+        }}
+        onTooltipClickOverride={(e?: React.MouseEvent<HTMLElement>) => {
+          if (e) e.stopPropagation();
+          onClickHandler(ClickHandlerFor.tooltip);
+        }}
       />
     );
   }
@@ -103,7 +140,10 @@ export function ReportIcon({
         <RatingIcon
           role="button"
           isInteractive={true}
-          onClick={onClickHandler}
+          onClick={(e?: React.MouseEvent<HTMLElement>) => {
+            if (e) e.stopPropagation();
+            onClickHandler(ClickHandlerFor.icon);
+          }}
           className="cursor-pointer"
           rating={rating}
           size={size}
@@ -138,7 +178,10 @@ export function ReportIcon({
           <div className="text-sm text-white">
             <button
               className="appearance-none underline font-medium"
-              onClick={onClickHandler}
+              onClick={(e?: React.MouseEvent<HTMLElement>) => {
+                if (e) e.stopPropagation();
+                onClickHandler(ClickHandlerFor.tooltip);
+              }}
             >
               Inspect name for details
             </button>

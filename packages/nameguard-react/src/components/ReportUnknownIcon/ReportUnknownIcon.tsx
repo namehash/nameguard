@@ -6,12 +6,14 @@ import { RatingUnknownIcon } from "../icons/RatingUnknownIcon";
 import { ENSName } from "@namehash/ens-utils";
 
 type ReportUnknownIconProps = {
-  onClickOverride?: (ensName: ENSName) => void;
+  onIconClickOverride?: (ensName: ENSName) => void;
+  onTooltipClickOverride?: (ensName: ENSName) => void;
   size?: RatingIconSize;
 } & React.ComponentProps<typeof RatingIcon>;
 
 export const ReportUnknownIcon = ({
-  onClickHandler,
+  onIconClickOverride,
+  onTooltipClickOverride,
   size = RatingIconSize.small,
 
   /*
@@ -28,7 +30,10 @@ export const ReportUnknownIcon = ({
       trigger={RatingUnknownIcon({
         size,
         isInteractive: true,
-        onClick: onClickHandler,
+        onClick: (e?: React.MouseEvent<HTMLElement>) => {
+          if (e) e.stopPropagation();
+          onIconClickOverride();
+        },
         ...props,
       })}
     >
@@ -47,7 +52,10 @@ export const ReportUnknownIcon = ({
           <div className="text-sm text-white">
             <button
               className="appearance-none underline font-medium"
-              onClick={onClickHandler}
+              onClick={(e?: React.MouseEvent<HTMLElement>) => {
+                if (e) e.stopPropagation();
+                onTooltipClickOverride();
+              }}
             >
               Inspect name for details
             </button>
