@@ -1,45 +1,45 @@
 import React from "react";
 
-import { RatingIcon, RatingIconSize } from "../Report/RatingIcon";
 import { Tooltip } from "../Tooltip/Tooltip";
-import { RatingUnknownIcon } from "../icons/RatingUnknownIcon";
 import { ENSName } from "@namehash/ens-utils";
+import { RatingIcon, RatingIconSize } from "../Report/RatingIcon";
+import { RatingLoadingIcon } from "../icons/RatingLoadingIcon";
 
-type UnknownShieldProps = {
+type ReportLoadingIconProps = {
   onClickOverride?: (ensName: ENSName) => void;
   size?: RatingIconSize;
 } & React.ComponentProps<typeof RatingIcon>;
 
-export const UnknownReportIcon = ({
+export const ReportLoadingIcon = ({
   onClickHandler,
   size = RatingIconSize.small,
 
   /*
-    Props are applied to the shield icon which is the onHover trigger element 
+    Props are applied to the RatingLoadingIcon trigger which is the onHover trigger element 
     for the tooltip with Report information. For examples, please visit the
     https://nameguard.io/docs/report and see the ReportIcon docs. Any 
-    additional props are passed to the shield icon that when hovered,
-    displays the tooltip with the report information.
+    additional props received are passed to the RatingLoadingIcon
+    that when hovered, displays the tooltip with the report information.
   */
   ...props
-}: UnknownShieldProps) => {
+}: ReportLoadingIconProps) => {
   return (
     <Tooltip
-      trigger={RatingUnknownIcon({
+      trigger={RatingLoadingIcon({
         size,
-        isInteractive: true,
+        onClick: onClickHandler,
         ...props,
       })}
     >
       <div className="flex items-start space-x-3 py-2.5 max-w-[300px]">
         <div className="mt-0.5">
-          <RatingUnknownIcon size={RatingIconSize.small} />
+          <RatingLoadingIcon fill="#CFCFCF" size={RatingIconSize.small} />
         </div>
 
         <div className="flex-1">
           <div className="flex items-center justify-between">
             <span className="font-semibold mb-1 text-white">
-              Error loading report
+              Loading report...
             </span>
           </div>
 

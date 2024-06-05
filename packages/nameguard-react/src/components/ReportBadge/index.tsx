@@ -1,16 +1,17 @@
 "use client";
 import {
   Normalization,
+  getNameGuardURLForENSname,
   type ConsolidatedNameGuardReport,
 } from "@namehash/nameguard";
+import { ENSName } from "@namehash/ens-utils";
 import React, { useEffect, useState, useRef } from "react";
 import cc from "classcat";
 
 import { ReportIcon } from "../ReportIcon/index";
 import { RatingIconSize, Tooltip } from "../..";
-import { UnknownReportIcon } from "../UnknownReportIcon/UnknownReportIcon";
-import { ENSName } from "@namehash/ens-utils";
-import { LoadingReportIcon } from "../LoadingReportIcon/LoadingReportIcon";
+import { ReportUnknownIcon } from "../ReportUnknownIcon/ReportUnknownIcon";
+import { ReportLoadingIcon } from "../ReportLoadingIcon/ReportLoadingIcon";
 
 interface ReportBadgeProps {
   /*
@@ -54,9 +55,7 @@ export function ReportBadge({
   const onClickHandler = () => {
     if (onClickOverride) onClickOverride(ensName);
     else {
-      window.location.href = `https://nameguard.io/inspect/${encodeURIComponent(
-        ensName.name,
-      )}`;
+      window.location.href = getNameGuardURLForENSname(ensName);
     }
   };
 
@@ -143,13 +142,13 @@ export function ReportBadge({
 
       {hadLoadingError ? (
         // Unknown Rating
-        <UnknownReportIcon
+        <ReportUnknownIcon
           size={RatingIconSize.micro}
           className="cursor-pointer"
         />
       ) : !data ? (
         // Loading Rating
-        <LoadingReportIcon
+        <ReportLoadingIcon
           size={RatingIconSize.micro}
           className="cursor-pointer animate-pulse"
         />

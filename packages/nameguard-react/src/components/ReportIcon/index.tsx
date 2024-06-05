@@ -7,12 +7,14 @@ import {
 } from "@namehash/nameguard";
 import cc from "classcat";
 
+import { ENSName } from "@namehash/ens-utils";
+import { getNameGuardURLForENSname } from "@namehash/nameguard";
+
 import { Tooltip } from "../Tooltip/Tooltip";
 import { RatingIcon, RatingIconSize } from "../Report/RatingIcon";
 import { checkResultCodeTextColor, ratingTextColor } from "../../utils/text";
-import { ENSName } from "@namehash/ens-utils";
-import { UnknownReportIcon } from "../UnknownReportIcon/UnknownReportIcon";
-import { LoadingReportIcon } from "../LoadingReportIcon/LoadingReportIcon";
+import { ReportUnknownIcon } from "../ReportUnknownIcon/ReportUnknownIcon";
+import { ReportLoadingIcon } from "../ReportLoadingIcon/ReportLoadingIcon";
 
 type ReportShieldProps = {
   onClickOverride?: (ensName: ENSName) => void;
@@ -46,26 +48,24 @@ export function ReportIcon({
   size = RatingIconSize.small,
 
   /*
-    Props are applied to the shield icon which is the onHover trigger element 
+    Props are applied to the Report Icon triggeer which is the onHover trigger element 
     for the tooltip with Report information. For examples, please visit the
     https://nameguard.io/docs/report and see the ReportIcon docs. Any 
-    additional props are passed to the shield icon that when hovered,
-    displays the tooltip with the report information.
+    additional props received are passed to the Report Icon that when 
+    hovered, displays the tooltip with the report information.
   */
   ...props
 }: ReportShieldProps) {
   const onClickHandler = () => {
     if (onClickOverride) onClickOverride(ensName);
     else {
-      window.location.href = `https://nameguard.io/inspect/${encodeURIComponent(
-        ensName.name,
-      )}`;
+      window.location.href = getNameGuardURLForENSname(ensName);
     }
   };
 
   if (hadLoadingError) {
     return (
-      <UnknownReportIcon
+      <ReportUnknownIcon
         size={size}
         className="cursor-pointer"
         onClickHandler={onClickHandler}
@@ -75,7 +75,7 @@ export function ReportIcon({
 
   if (!data) {
     return (
-      <LoadingReportIcon
+      <ReportLoadingIcon
         size={size}
         onClickHandler={onClickHandler}
         className="cursor-pointer animate-pulse"
