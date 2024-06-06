@@ -8,9 +8,10 @@ import React, { useEffect, useState, useRef } from "react";
 import cc from "classcat";
 
 import { ReportIcon } from "../ReportIcon/index";
-import { RatingIconSize, Tooltip, getNameGuardURLForENSname } from "../..";
+import { RatingIconSize, Tooltip } from "../..";
 import { ReportUnknownIcon } from "../ReportUnknownIcon/ReportUnknownIcon";
 import { ReportLoadingIcon } from "../ReportLoadingIcon/ReportLoadingIcon";
+import { redirectUserToNameGuardInspectPage } from "../../utils/url";
 
 interface ReportBadgeProps {
   /*
@@ -86,10 +87,6 @@ export function ReportBadge({
         }
         break;
     }
-  };
-
-  const redirectUserToNameGuardInspectPage = (ensName: ENSName) => {
-    window.location.href = getNameGuardURLForENSname(ensName);
   };
 
   const invisibleNameWidthTester = useRef<null | HTMLParagraphElement>(null);

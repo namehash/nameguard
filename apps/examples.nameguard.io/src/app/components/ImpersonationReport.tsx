@@ -6,7 +6,7 @@ import {
   RatingIconSize,
   ratingTextColor,
   RatingLoadingIcon,
-  getNameGuardURLForENSname,
+  viewNameReportURL,
 } from "@namehash/nameguard-react";
 import { buildENSName } from "@namehash/ens-utils";
 import cc from "classcat";
@@ -68,9 +68,9 @@ export function ImpersonationReport({ data }: ImpersonationReportProps) {
             </div>
             <div className="text-sm text-white">
               <a
-                href={getNameGuardURLForENSname(
-                  buildENSName(nameguard_result.name),
-                )}
+                href={
+                  viewNameReportURL(buildENSName(nameguard_result.name)).href
+                }
                 className="underline"
                 rel="noopener noreferrer"
                 target="_blank"

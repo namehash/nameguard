@@ -11,11 +11,9 @@ import { toast } from "sonner";
 import cc from "classcat";
 import { Tooltip } from "../Tooltip/Tooltip";
 import { CheckResultCode } from "@namehash/nameguard";
-import {
-  checkResultCodeTextColor,
-  getNameGuardURLForENSname,
-} from "../../utils/text";
+import { checkResultCodeTextColor } from "../../utils/text";
 import { buildENSName } from "@namehash/ens-utils";
+import { viewNameReportURL } from "../../utils/url";
 
 type ShareProps = {
   name: string;
@@ -23,7 +21,7 @@ type ShareProps = {
 
 function createTwitterLink(name: string) {
   const tweetText = `Check out the NameGuard Report for ${name}\n`;
-  const url = getNameGuardURLForENSname(buildENSName(name));
+  const url = viewNameReportURL(buildENSName(name)).href;
 
   return `https://twitter.com/intent/tweet?text=${encodeURIComponent(
     tweetText,
@@ -48,16 +46,14 @@ export function Share({ name }: ShareProps) {
 
   const twitterLink = createTwitterLink(name);
   const telegramLink = createTelegramLink(
-    getNameGuardURLForENSname(buildENSName(name)),
+    viewNameReportURL(buildENSName(name)).href,
   );
   const emailLink = createMailToLink(
     `NameGuard Report for ${name}`,
-    `Check this out!\n${getNameGuardURLForENSname(buildENSName(name))}`,
+    `Check this out!\n${viewNameReportURL(buildENSName(name)).href}`,
   );
   const copyLinkToClipboard = () => {
-    navigator.clipboard.writeText(
-      getNameGuardURLForENSname(buildENSName(name)),
-    );
+    navigator.clipboard.writeText(viewNameReportURL(buildENSName(name)).href);
     toast.success("Link copied to clipboard", {
       icon: (
         <CheckCircleIcon

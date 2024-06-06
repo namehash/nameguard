@@ -8,13 +8,14 @@ import {
 import cc from "classcat";
 
 import { ENSName } from "@namehash/ens-utils";
-import { getNameGuardURLForENSname } from "../..";
+import { viewNameReportURL } from "../..";
 
 import { Tooltip } from "../Tooltip/Tooltip";
 import { RatingIcon, RatingIconSize } from "../Report/RatingIcon";
 import { checkResultCodeTextColor, ratingTextColor } from "../../utils/text";
 import { ReportUnknownIcon } from "../ReportUnknownIcon/ReportUnknownIcon";
 import { ReportLoadingIcon } from "../ReportLoadingIcon/ReportLoadingIcon";
+import { redirectUserToNameGuardInspectPage } from "../../utils/url";
 
 type ReportShieldProps = {
   onIconClickOverride?: (ensName: ENSName) => void;
@@ -80,10 +81,6 @@ export function ReportIcon({
         }
         break;
     }
-  };
-
-  const redirectUserToNameGuardInspectPage = (ensName: ENSName) => {
-    window.location.href = getNameGuardURLForENSname(ensName);
   };
 
   if (hadLoadingError) {
