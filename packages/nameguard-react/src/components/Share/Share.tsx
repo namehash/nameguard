@@ -10,11 +10,11 @@ import { toast } from "sonner";
 
 import cc from "classcat";
 import { Tooltip } from "../Tooltip/Tooltip";
+import { CheckResultCode } from "@namehash/nameguard";
 import {
-  CheckResultCode,
+  checkResultCodeTextColor,
   getNameGuardURLForENSname,
-} from "@namehash/nameguard";
-import { checkResultCodeTextColor } from "../../utils/text";
+} from "../../utils/text";
 import { buildENSName } from "@namehash/ens-utils";
 
 type ShareProps = {

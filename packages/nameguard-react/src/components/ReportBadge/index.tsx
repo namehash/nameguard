@@ -1,7 +1,6 @@
 "use client";
 import {
   Normalization,
-  getNameGuardURLForENSname,
   type ConsolidatedNameGuardReport,
 } from "@namehash/nameguard";
 import { ENSName } from "@namehash/ens-utils";
@@ -9,7 +8,7 @@ import React, { useEffect, useState, useRef } from "react";
 import cc from "classcat";
 
 import { ReportIcon } from "../ReportIcon/index";
-import { RatingIconSize, Tooltip } from "../..";
+import { RatingIconSize, Tooltip, getNameGuardURLForENSname } from "../..";
 import { ReportUnknownIcon } from "../ReportUnknownIcon/ReportUnknownIcon";
 import { ReportLoadingIcon } from "../ReportLoadingIcon/ReportLoadingIcon";
 

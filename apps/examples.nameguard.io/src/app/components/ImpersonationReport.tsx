@@ -1,14 +1,12 @@
 "use client";
 
-import {
-  getNameGuardURLForENSname,
-  type SecurePrimaryNameResult,
-} from "@namehash/nameguard";
+import { type SecurePrimaryNameResult } from "@namehash/nameguard";
 import {
   RatingIcon,
   RatingIconSize,
-  RatingLoadingIcon,
   ratingTextColor,
+  RatingLoadingIcon,
+  getNameGuardURLForENSname,
 } from "@namehash/nameguard-react";
 import { buildENSName } from "@namehash/ens-utils";
 import cc from "classcat";

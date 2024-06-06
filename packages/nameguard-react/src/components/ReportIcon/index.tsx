@@ -8,7 +8,7 @@ import {
 import cc from "classcat";
 
 import { ENSName } from "@namehash/ens-utils";
-import { getNameGuardURLForENSname } from "@namehash/nameguard";
+import { getNameGuardURLForENSname } from "../..";
 
 import { Tooltip } from "../Tooltip/Tooltip";
 import { RatingIcon, RatingIconSize } from "../Report/RatingIcon";

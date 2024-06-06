@@ -118,7 +118,7 @@ export const Report = ({
           <ReportHeader />
           {data && externalLinks && (
             <div className="flex-shrink-0 flex items-start space-x-1 absolute md:relative right-0 md:right-auto -top-1 md:top-auto">
-              <Share name={data?.name} />
+              <Share name={data.name} />
               <ExternalLinks title="View name in" links={externalLinks} />
             </div>
           )}
