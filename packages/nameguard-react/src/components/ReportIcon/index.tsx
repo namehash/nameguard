@@ -15,7 +15,7 @@ import { RatingIcon, RatingIconSize } from "../Report/RatingIcon";
 import { checkResultCodeTextColor, ratingTextColor } from "../../utils/text";
 import { ReportUnknownIcon } from "../ReportUnknownIcon/ReportUnknownIcon";
 import { ReportLoadingIcon } from "../ReportLoadingIcon/ReportLoadingIcon";
-import { redirectUserToNameGuardInspectPage } from "../../utils/url";
+import { redirectToViewNameReportURL } from "../../utils/url";
 
 type ReportShieldProps = {
   onIconClickOverride?: (ensName: ENSName) => void;
@@ -70,14 +70,14 @@ export function ReportIcon({
         if (onIconClickOverride) {
           onIconClickOverride(ensName);
         } else {
-          redirectUserToNameGuardInspectPage(ensName);
+          redirectToViewNameReportURL(ensName);
         }
         break;
       case ClickHandlerFor.tooltip:
         if (onTooltipClickOverride) {
           onTooltipClickOverride(ensName);
         } else {
-          redirectUserToNameGuardInspectPage(ensName);
+          redirectToViewNameReportURL(ensName);
         }
         break;
     }

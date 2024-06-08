@@ -11,7 +11,7 @@ import { ReportIcon } from "../ReportIcon/index";
 import { RatingIconSize, Tooltip } from "../..";
 import { ReportUnknownIcon } from "../ReportUnknownIcon/ReportUnknownIcon";
 import { ReportLoadingIcon } from "../ReportLoadingIcon/ReportLoadingIcon";
-import { redirectUserToNameGuardInspectPage } from "../../utils/url";
+import { redirectToViewNameReportURL } from "../../utils/url";
 
 interface ReportBadgeProps {
   /*
@@ -69,21 +69,21 @@ export function ReportBadge({
         if (onBadgeClickOverride) {
           onBadgeClickOverride(ensName);
         } else {
-          redirectUserToNameGuardInspectPage(ensName);
+          redirectToViewNameReportURL(ensName);
         }
         break;
       case ClickHandlerFor.icon:
         if (onIconClickOverride) {
           onIconClickOverride(ensName);
         } else {
-          redirectUserToNameGuardInspectPage(ensName);
+          redirectToViewNameReportURL(ensName);
         }
         break;
       case ClickHandlerFor.tooltip:
         if (onTooltipClickOverride) {
           onTooltipClickOverride(ensName);
         } else {
-          redirectUserToNameGuardInspectPage(ensName);
+          redirectToViewNameReportURL(ensName);
         }
         break;
     }

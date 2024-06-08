@@ -6,6 +6,6 @@ export function viewNameReportURL(ensName: ENSName): URL {
   );
 }
 
-export function redirectUserToNameGuardInspectPage(ensName: ENSName) {
+export function redirectToViewNameReportURL(ensName: ENSName) {
   window.location.href = viewNameReportURL(ensName).href;
 }
