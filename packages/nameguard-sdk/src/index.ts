@@ -446,7 +446,7 @@ const DEFAULT_ENDPOINT = "https://api.nameguard.io";
 const DEFAULT_NETWORK: Network = "mainnet";
 const DEFAULT_INSPECT_LABELHASH_PARENT = ETH_TLD;
 const MAX_BULK_INSPECTION_NAMES = 250;
-const INSPECTABLE_NAMES_LENGTH = 200;
+const MAX_INSPECTABLE_NAME_LENGTH = 200;
 
 interface NameGuardOptions {
   endpoint?: string;
@@ -490,7 +490,7 @@ class NameGuard {
   }
 
   /**
-   * Inspects a single name with NameGuard. Provides `null` if the `name` is longer than {INSPECTABLE_NAMES_LENGTH} characters or a `NameGuardReport` including:
+   * Inspects a single name with NameGuard. If the `name` is longer than `MAX_INSPECTABLE_NAME_LENGTH` characters returns `null`; else returns a `NameGuardReport` including:
    *   1. The details of all checks performed on `name` that consolidates all checks performed on labels and graphemes in `name`.
    *   2. The details of all labels in `name`.
    *   3. A consolidated inspection result of all graphemes in `name`.
@@ -554,7 +554,7 @@ class NameGuard {
    * Inspects the name associated with a namehash.
    *
    * NameGuard will attempt to resolve the name associated with the namehash through the ENS Subgraph.
-   * If this resolution succeeds then NameGuard will generate and return `null` if the `name` is longer than {INSPECTABLE_NAMES_LENGTH} characters or a `NameGuardReport` for the name.
+   * If this resolution succeeds then NameGuard will return a `NameGuardReport` for the name. If the resolved `name` is longer than `MAX_INSPECTABLE_NAME_LENGTH` characters then NameGuard will return `null`.
    * If this resolution fails then NameGuard will return an error.
    *
    * @param {string} namehash A namehash should be a decimal or a hex (prefixed with 0x) string.
@@ -601,7 +601,7 @@ class NameGuard {
    *   1. The labelhash of the "childmost" label of a name.
    *   2. The complete parent name of the "childmost" label.
    *
-   * Returns `null` if the `name` is longer than {INSPECTABLE_NAMES_LENGTH} characters.
+   * Returns `null` if labels in the resolved `name` are longer than `MAX_INSPECTABLE_NAME_LENGTH` characters.
    *
    * NameGuard always inspects names, rather than labelhashes. So this function will first attempt
    * to resolve the "childmost" label associated with the provided labelhash through the ENS Subgraph,
