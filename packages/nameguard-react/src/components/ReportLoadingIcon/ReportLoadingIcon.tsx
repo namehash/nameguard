@@ -1,15 +1,14 @@
 import React from "react";
 
 import { Tooltip } from "../Tooltip/Tooltip";
-import { ENSName } from "@namehash/ens-utils";
 import { RatingIcon, RatingIconSize } from "../Report/RatingIcon";
 import { RatingLoadingIcon } from "../icons/RatingLoadingIcon";
 
 type ReportLoadingIconProps = {
-  onIconClickOverride?: (ensName: ENSName) => void;
-  onTooltipClickOverride?: (ensName: ENSName) => void;
+  onIconClickOverride?: (mouseEvent: React.MouseEvent) => void;
+  onTooltipClickOverride?: (mouseEvent: React.MouseEvent) => void;
   size?: RatingIconSize;
-} & React.ComponentProps<typeof RatingIcon>;
+} & React.ComponentProps<"svg">;
 
 export const ReportLoadingIcon = ({
   onIconClickOverride,
@@ -29,9 +28,9 @@ export const ReportLoadingIcon = ({
     <Tooltip
       trigger={RatingLoadingIcon({
         size,
-        onClick: (e?: React.MouseEvent<HTMLElement>) => {
+        onClick: (e?: React.MouseEvent) => {
           if (e) e.stopPropagation();
-          onIconClickOverride();
+          onIconClickOverride(e);
         },
         ...props,
       })}
@@ -51,9 +50,9 @@ export const ReportLoadingIcon = ({
           <div className="text-sm text-white">
             <button
               className="appearance-none underline font-medium"
-              onClick={(e?: React.MouseEvent<HTMLElement>) => {
+              onClick={(e?: React.MouseEvent) => {
                 if (e) e.stopPropagation();
-                onTooltipClickOverride();
+                onTooltipClickOverride(e);
               }}
             >
               Inspect name for details

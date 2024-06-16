@@ -1,15 +1,14 @@
 import React from "react";
 
-import { RatingIcon, RatingIconSize } from "../Report/RatingIcon";
 import { Tooltip } from "../Tooltip/Tooltip";
+import { RatingIconSize } from "../Report/RatingIcon";
 import { RatingUnknownIcon } from "../icons/RatingUnknownIcon";
-import { ENSName } from "@namehash/ens-utils";
 
 type ReportUnknownIconProps = {
-  onIconClickOverride?: (ensName: ENSName) => void;
-  onTooltipClickOverride?: (ensName: ENSName) => void;
+  onIconClickOverride?: (mouseEvent: React.MouseEvent) => void;
+  onTooltipClickOverride?: (mouseEvent: React.MouseEvent) => void;
   size?: RatingIconSize;
-} & React.ComponentProps<typeof RatingIcon>;
+} & React.ComponentProps<"svg">;
 
 export const ReportUnknownIcon = ({
   onIconClickOverride,
@@ -30,9 +29,9 @@ export const ReportUnknownIcon = ({
       trigger={RatingUnknownIcon({
         size,
         isInteractive: true,
-        onClick: (e?: React.MouseEvent<HTMLElement>) => {
+        onClick: (e?: React.MouseEvent) => {
           if (e) e.stopPropagation();
-          onIconClickOverride();
+          onIconClickOverride(e);
         },
         ...props,
       })}
@@ -52,9 +51,9 @@ export const ReportUnknownIcon = ({
           <div className="text-sm text-white">
             <button
               className="appearance-none underline font-medium"
-              onClick={(e?: React.MouseEvent<HTMLElement>) => {
+              onClick={(e?: React.MouseEvent) => {
                 if (e) e.stopPropagation();
-                onTooltipClickOverride();
+                onTooltipClickOverride(e);
               }}
             >
               Inspect name for details
