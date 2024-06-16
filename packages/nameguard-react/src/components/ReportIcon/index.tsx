@@ -6,9 +6,7 @@ import {
   ConsolidatedNameGuardReport,
 } from "@namehash/nameguard";
 import cc from "classcat";
-
 import { ENSName } from "@namehash/ens-utils";
-import { viewNameReportURL } from "../..";
 
 import { Tooltip } from "../Tooltip/Tooltip";
 import { RatingIcon, RatingIconSize } from "../Report/RatingIcon";
@@ -32,9 +30,9 @@ type ReportShieldProps = {
   ensName: ENSName;
   data?: ConsolidatedNameGuardReport;
 
-  hadLoadingError: boolean;
+  hadLoadingError?: boolean;
   size?: RatingIconSize;
-} & React.ComponentProps;
+} & React.ComponentProps<"svg">;
 
 declare global {
   interface Window {
@@ -88,11 +86,11 @@ export function ReportIcon({
       <ReportUnknownIcon
         size={size}
         className="cursor-pointer"
-        onIconClickOverride={(e?: React.MouseEvent<HTMLElement>) => {
+        onIconClickOverride={(e?: React.MouseEvent) => {
           if (e) e.stopPropagation();
           onClickHandler(ClickHandlerFor.icon);
         }}
-        onTooltipClickOverride={(e?: React.MouseEvent<HTMLElement>) => {
+        onTooltipClickOverride={(e?: React.MouseEvent) => {
           if (e) e.stopPropagation();
           onClickHandler(ClickHandlerFor.tooltip);
         }}
@@ -105,11 +103,11 @@ export function ReportIcon({
       <ReportLoadingIcon
         size={size}
         className="cursor-pointer"
-        onIconClickOverride={(e?: React.MouseEvent<HTMLElement>) => {
+        onIconClickOverride={(e?: React.MouseEvent) => {
           if (e) e.stopPropagation();
           onClickHandler(ClickHandlerFor.icon);
         }}
-        onTooltipClickOverride={(e?: React.MouseEvent<HTMLElement>) => {
+        onTooltipClickOverride={(e?: React.MouseEvent) => {
           if (e) e.stopPropagation();
           onClickHandler(ClickHandlerFor.tooltip);
         }}
@@ -137,7 +135,7 @@ export function ReportIcon({
         <RatingIcon
           role="button"
           isInteractive={true}
-          onClick={(e?: React.MouseEvent<HTMLElement>) => {
+          onClick={(e?: React.MouseEvent) => {
             if (e) e.stopPropagation();
             onClickHandler(ClickHandlerFor.icon);
           }}
@@ -175,7 +173,7 @@ export function ReportIcon({
           <div className="text-sm text-white">
             <button
               className="appearance-none underline font-medium"
-              onClick={(e?: React.MouseEvent<HTMLElement>) => {
+              onClick={(e?: React.MouseEvent) => {
                 if (e) e.stopPropagation();
                 onClickHandler(ClickHandlerFor.tooltip);
               }}

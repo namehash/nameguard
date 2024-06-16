@@ -12,8 +12,9 @@ import cc from "classcat";
 import { Tooltip } from "../Tooltip/Tooltip";
 import { CheckResultCode } from "@namehash/nameguard";
 import { checkResultCodeTextColor } from "../../utils/text";
-import { buildENSName } from "@namehash/ens-utils";
 import { viewNameReportURL } from "../../utils/url";
+import { DisplayedName } from "../DisplayedName/DisplayedName";
+import { buildENSName } from "@namehash/ens-utils";
 
 type ShareProps = {
   name: string;
@@ -131,9 +132,10 @@ export function Share({ name }: ShareProps) {
 
                   <div className="min-h-[200px] flex items-center justify-center px-6 md:px-10">
                     {name && (
-                      <p className="font-extrabold text-black text-xl text-ellipsis overflow-hidden line-clamp-1 ens-webfont">
-                        {name}
-                      </p>
+                      <DisplayedName
+                        name={buildENSName(name)}
+                        textStylingClasses="font-extrabold text-black text-xl"
+                      />
                     )}
                   </div>
 
