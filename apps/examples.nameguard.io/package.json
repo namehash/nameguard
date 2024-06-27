@@ -12,6 +12,7 @@
     "@headlessui/react": "1.7.17",
     "@namehash/nameguard": "workspace:*",
     "@namehash/nameguard-react": "workspace:*",
+    "@namehash/ens-utils": "workspace:*",
     "classcat": "5.0.4",
     "next": "14.1.0",
     "react": "^18",
