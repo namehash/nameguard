@@ -1,11 +1,12 @@
-from typing import Optional
+from typing import Optional, Union, Literal
 from pydantic import BaseModel, Field, computed_field, field_serializer
 from enum import Enum
 from ens_normalize import ens_beautify
 
 from nameguard.context import endpoint_name
-from nameguard.models.checks import GenericCheckResult, Rating, Check
-from nameguard.utils import detect_grapheme_link_name
+from nameguard.models.checks import GenericCheckResult, Rating, Check, UNINSPECTED_CHECK_RESULT
+
+from nameguard.utils import detect_grapheme_link_name, MAX_INSPECTED_NAME_CHARACTERS
 from nameguard.endpoints import Endpoints
 
 
@@ -226,6 +227,18 @@ class ConsolidatedNameGuardReport(ConsolidatedReport):
         return self.name
 
 
+class ConsolidatedUninspectedNameGuardReport(ConsolidatedNameGuardReport):
+    """
+    Uninspected name analysis result without information about checks and labels.
+    """
+
+    risk_count: Literal[1] = Field(description='The number of checks that have a status of `alert` or `warn`.')
+    rating: Literal[Rating.ALERT]
+    highest_risk: Literal[UNINSPECTED_CHECK_RESULT] = Field(
+        description='The check considered to be the highest risk. If no check has a status of `alert` or `warn`, this field is `null`.',
+    )
+
+
 class NameGuardReport(ConsolidatedNameGuardReport):
     """
     Full name analysis result with information about individual checks and labels.
@@ -252,7 +265,7 @@ class BulkNameGuardBulkReport(BaseModel):
     Bulk name analysis results.
     """
 
-    results: list[ConsolidatedNameGuardReport]
+    results: list[Optional[ConsolidatedNameGuardReport]]
 
 
 class ConfusableGuardReport(ConsolidatedGraphemeGuardReport):
@@ -309,11 +322,13 @@ class SecurePrimaryNameStatus(str, Enum):
     * `normalized`: The ENS primary name was found and it is normalized.
     * `no_primary_name`: The ENS primary name was not found.
     * `unnormalized`: The ENS primary name was found, but it is not normalized.
+    * `uninspected`: The name was not inspected, because it is too long.
     """
 
     NORMALIZED = 'normalized'
     NO_PRIMARY_NAME = 'no_primary_name'
     UNNORMALIZED = 'unnormalized'
+    UNINSPECTED = 'uninspected'
 
 
 class ImpersonationStatus(str, Enum):
@@ -351,7 +366,7 @@ class SecurePrimaryNameResult(BaseModel):
         examples=['vitalik.eth'],
     )
 
-    nameguard_result: Optional[NameGuardReport] = Field(
+    nameguard_result: Optional[Union[NameGuardReport, ConsolidatedNameGuardReport]] = Field(
         description='NameGuard report for the `primary_name`.\n'
         '* `null` if `primary_name_status` is `no_primary_name` (primary name is not found)'
     )
@@ -387,7 +402,8 @@ class FakeEthNameCheckResult(BaseModel):
 
     nameguard_result: Optional[NameGuardReport] = Field(
         description='NameGuard report for the .eth ENS NFT.\n'
-        '* `null` if `status` is any value except `authentic_eth_name`, `invalid_eth_name` and `unknown_eth_name` (the NFT is not associated with authentic ".eth" contracts)'
+        '* `null` if `status` is any value except `authentic_eth_name`, `invalid_eth_name` and `unknown_eth_name` (the NFT is not associated with authentic ".eth" contracts)\n'
+        f'* `null` if name is longer then {MAX_INSPECTED_NAME_CHARACTERS} characters'
     )
 
     investigated_fields: Optional[dict[str, str]] = Field(

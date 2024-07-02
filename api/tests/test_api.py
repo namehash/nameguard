@@ -861,6 +861,19 @@ def test_primary_name_get_unnormalized(test_client):
     assert res_json['display_name'] == 'Unnamed fa9a'
 
 
+@pytest.mark.flaky(retries=2, condition=not pytest.use_monkeypatch)
+def test_primary_name_get_uninspected(test_client):
+    address = '0xf4A4D9C75dA65d507cfcd5ff0aCB73D40D3A3bCB'
+    response = test_client.get(f'/secure-primary-name/mainnet/{address}')
+    assert response.status_code == 200
+    res_json = response.json()
+    print(res_json)
+    assert res_json['impersonation_status'] is None
+    assert res_json['primary_name_status'] == 'uninspected'
+    assert res_json['primary_name'] is None
+    assert res_json['display_name'] == 'Unnamed f4a4'
+
+
 def test_primary_name_get_invalid_address(test_client):
     address = '0xfA9A134f997b3d48e122d043E12d04E909b1107g'
     response = test_client.get(f'/secure-primary-name/mainnet/{address}')
@@ -1256,3 +1269,40 @@ def test_fake_eth_name_check_fields_missing_title(test_client, contract_address,
     }
     response = test_client.post('/fake-eth-name-check', json=json_req)
     assert response.status_code == 422
+
+
+def test_inspect_name_post_long(test_client):
+    name = '≡ƒÿ║' * 250
+    response = test_client.post('/inspect-name', json={'name': name, 'network_name': 'mainnet'})
+    assert response.status_code == 200
+    res_json = response.json()
+    pprint(res_json)
+
+
+def test_bulk_inspect_name_post_long(test_client):
+    name = '≡ƒÿ║' * 50
+    names = [name] * 250
+    response = test_client.post('/bulk-inspect-names', json={'names': names, 'network_name': 'mainnet'})
+    assert response.status_code == 200
+    res_json = response.json()
+    pprint(res_json)
+    assert all([x is not None for x in res_json['results']])
+
+
+def test_bulk_inspect_name_post_too_long(test_client):
+    name = '≡ƒÿ║' * 51
+    names = [name] * 250
+    response = test_client.post('/bulk-inspect-names', json={'names': names, 'network_name': 'mainnet'})
+    assert response.status_code == 200
+    res_json = response.json()
+    pprint(res_json)
+    # assert all([x is None for x in res_json['results']])
+
+
+def test_bulk_inspect_name_post_too_long_normalized(test_client):
+    name = 'abcd' * 51
+    names = [name] * 250
+    response = test_client.post('/bulk-inspect-names', json={'names': names, 'network_name': 'mainnet'})
+    assert response.status_code == 200
+    res_json = response.json()
+    pprint(res_json)

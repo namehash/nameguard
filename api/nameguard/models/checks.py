@@ -106,6 +106,8 @@ class Check(str, Enum):
     NAMEWRAPPER_FUSES = 'namewrapper_fuses'
     DECENTRALIZED_NAME = 'decentralized_name'
 
+    UNINSPECTED = 'uninspected'
+
     @property
     def human_readable_name(self):
         mapping = {
@@ -122,6 +124,7 @@ class Check(str, Enum):
             self.PUNYCODE_COMPATIBLE_NAME: 'DNS Compatible Name',
             self.NAMEWRAPPER_FUSES: 'NameWrapper Fuses',
             self.DECENTRALIZED_NAME: 'Decentralized Name',
+            self.UNINSPECTED: 'Uninspected Name',
         }
         if self in mapping:
             return mapping[self]
@@ -300,3 +303,14 @@ class NameCheckResult(GenericCheckResult):
     @property
     def _context(self):
         return 'name'
+
+    def __hash__(self):
+        return hash((self.check, self.status))
+
+
+UNINSPECTED_CHECK_RESULT = NameCheckResult(
+    check=Check.UNINSPECTED,
+    status=CheckStatus.ALERT,
+    _name_message='Name is uninspected',
+    _title='Uninspected',
+)
