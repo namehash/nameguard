@@ -505,14 +505,14 @@ class NameGuard {
    *
    * @param {string} name The name for NameGuard to inspect.
    * @param {InspectNameOptions} options The options for the inspection.
-   * @returns {Promise<ConsolidatedNameGuardReport>} A promise that resolves with the `NameGuardReport` of the name.
+   * @returns {Promise<NameGuardReport | ConsolidatedNameGuardReport>} A promise that resolves with the `NameGuardReport` of the name.
    * @example
    * const nameGuardReport = await nameguard.inspectName('vitalik.eth');
    */
   public inspectName(
     name: string,
     options?: InspectNameOptions
-  ): Promise<ConsolidatedNameGuardReport> {
+  ): Promise<NameGuardReport | ConsolidatedNameGuardReport> {
     const network_name = options?.network || this.network;
 
     return this.rawRequest("inspect-name", "POST", { name, network_name });
@@ -564,12 +564,12 @@ class NameGuard {
    *
    * @param {string} namehash A namehash should be a decimal or a hex (prefixed with 0x) string.
    * @param {InspectNamehashOptions} options The options for the inspection.
-   * @returns {Promise<ConsolidatedNameGuardReport>}  A promise that resolves with a `NameGuardReport` of the resolved name.
+   * @returns {Promise<NameGuardReport | ConsolidatedNameGuardReport>}  A promise that resolves with a `NameGuardReport` of the resolved name.
    */
   public async inspectNamehash(
     namehash: string,
     options?: InspectNamehashOptions
-  ): Promise<ConsolidatedNameGuardReport> {
+  ): Promise<NameGuardReport | ConsolidatedNameGuardReport> {
     if (!isKeccak256Hash(namehash)) {
       throw new Error("Invalid Keccak256 hash format for namehash.");
     }
@@ -621,12 +621,12 @@ class NameGuard {
    *
    * @param {string} labelhash A labelhash should be a decimal or a hex (prefixed with 0x) string.
    * @param {InspectLabelhashOptions} options The options for the inspection.
-   * @returns {Promise<ConsolidatedNameGuardReport>}  A promise that resolves with a `NameGuardReport` of the resolved name.
+   * @returns {Promise<NameGuardReport | ConsolidatedNameGuardReport>}  A promise that resolves with a `NameGuardReport` of the resolved name.
    */
   public async inspectLabelhash(
     labelhash: string,
     options?: InspectLabelhashOptions
-  ): Promise<ConsolidatedNameGuardReport> {
+  ): Promise<NameGuardReport | ConsolidatedNameGuardReport> {
     if (!isKeccak256Hash(labelhash)) {
       throw new Error("Invalid Keccak256 hash format for labelhash.");
     }
