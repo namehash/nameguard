@@ -433,7 +433,7 @@ export interface SecurePrimaryNameResult {
    *
    * `null` if `primary_name_status` is `no_primary_name` (primary name is not found).
    */
-  nameguard_result: NameGuardReport | null;
+  nameguard_result: NameGuardReport | ConsolidatedNameGuardReport | null;
 }
 
 // TODO: Let's apply more formalization to this error class.
