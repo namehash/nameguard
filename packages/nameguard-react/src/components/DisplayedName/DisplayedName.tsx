@@ -1,4 +1,15 @@
-import { TruncatedText } from "../TruncatedText/TruncatedText";
+/*
+  <IMPORTANT>
+
+    This file was moved to namekit-react package and
+    it is kept here for migration code integrity only.
+
+    Once the migration is done, this file should be deleted.
+
+  </IMPORTANT>
+*/
+
+import { TruncatedText } from "@namehash/namekit-react";
 import { Normalization } from "@namehash/nameguard";
 import { ENSName } from "@namehash/ens-utils";
 import React from "react";
@@ -38,9 +49,12 @@ export function DisplayedName({
       text={displayName}
       maxTooltipWidth={maxTooltipWidth}
       maxDisplayWidth={maxDisplayWidth}
-      textStylingClasses={cc([textStylingClasses, "ens-webfont"])}
+      textStylingClasses={cc([textStylingClasses, "ng-ens-webfont"])}
       displayTooltipWhenTextOverflows={displayTooltipWhenNameOverflows}
-      tooltipTextStylingClasses={cc([tooltipTextStylingClasses, "ens-webfont"])}
+      tooltipTextStylingClasses={cc([
+        tooltipTextStylingClasses,
+        "ng-ens-webfont",
+      ])}
     />
   );
 }

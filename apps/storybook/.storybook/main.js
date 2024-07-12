@@ -1,5 +1,9 @@
 import { join, dirname } from "path";
 
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
+
 /**
  * This function is used to resolve the absolute path of a package.
  * It is needed in projects that use Yarn PnP or are set up within a monorepo.
@@ -15,6 +19,7 @@ const config = {
     "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)",
     // "../../../packages/**/*.stories.@(js|jsx|mjs|ts|tsx)",
   ],
+
   addons: [
     getAbsolutePath("@storybook/addon-onboarding"),
     getAbsolutePath("@storybook/addon-links"),
@@ -22,6 +27,7 @@ const config = {
     getAbsolutePath("@chromatic-com/storybook"),
     getAbsolutePath("@storybook/addon-interactions"),
   ],
+
   framework: {
     name: getAbsolutePath("@storybook/react-vite"),
     options: {},

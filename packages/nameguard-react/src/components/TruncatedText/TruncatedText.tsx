@@ -1,5 +1,16 @@
+/*
+  <IMPORTANT>
+
+    This file was moved to namekit-react package and
+    it is kept here for migration code integrity only.
+
+    Once the migration is done, this file should be deleted.
+
+  </IMPORTANT>
+*/
+
 import React, { useEffect, useState, useRef } from "react";
-import { Tooltip } from "../..";
+import { Tooltip } from "@namehash/namekit-react";
 import cc from "classcat";
 
 interface TruncatedTextProps {
@@ -56,7 +67,7 @@ export const TruncatedText = ({
     );
   };
 
-  const textDefaultClasses = "text-black text-sm truncate";
+  const textDefaultClasses = "ng-text-black ng-text-sm ng-truncate";
 
   return (
     <div>
@@ -68,7 +79,7 @@ export const TruncatedText = ({
         to determine if CSS truncation and full-text tooltip are needed. 
       */}
       {displayTooltipWhenTextOverflows && (
-        <div className="invisible absolute left-0 top-0 pointer-events-none">
+        <div className="ng-invisible ng-absolute ng-left-0 ng-top-0 ng-pointer-events-none">
           <div ref={invisibleTextWidthTester}>{text}</div>
         </div>
       )}
@@ -95,7 +106,7 @@ export const TruncatedText = ({
           >
             {getTextElm(
               cc([
-                "text-white text-sm leading-5 break-all",
+                "ng-text-white ng-text-sm ng-leading-5 ng-break-all",
                 tooltipTextStylingClasses,
               ]),
               maxTooltipWidth,

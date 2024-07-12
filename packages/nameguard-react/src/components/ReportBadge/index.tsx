@@ -4,13 +4,9 @@ import React, { useEffect } from "react";
 import cc from "classcat";
 
 import { ReportIcon } from "../ReportIcon/index";
-import {
-  RatingLoadingIcon,
-  RatingIconSize,
-  Tooltip,
-  DisplayedName,
-} from "../..";
+import { RatingLoadingIcon, RatingIconSize } from "../..";
 import { UnknownReportIcon } from "../UnknownReportIcon/UnknownReportIcon";
+import { DisplayedName } from "@namehash/namekit-react";
 import { ENSName } from "@namehash/ens-utils";
 
 interface ReportBadgeProps {
@@ -72,7 +68,7 @@ export function ReportBadge({
   return (
     <button className={buttonAndCursorClass} onClick={onClickHandler}>
       <DisplayedName
-        textStylingClasses="cursor-pointer pr-1.5"
+        textStylingClasses="ng-cursor-pointer ng-pr-1.5"
         displayUnnormalizedNames={displayUnnormalizedNames}
         maxDisplayWidth={maxDisplayWidth}
         name={ensName}
@@ -82,11 +78,11 @@ export function ReportBadge({
         // Unknown Rating
         <UnknownReportIcon
           size={RatingIconSize.micro}
-          className="cursor-pointer"
+          className="ng-cursor-pointer"
         >
-          <div className="text-sm text-white">
+          <div className="ng-text-sm ng-text-white">
             <button
-              className="appearance-none underline font-medium"
+              className="ng-appearance-none ng-underline ng-font-medium"
               onClick={onClickHandler}
             >
               Inspect name for details
@@ -97,7 +93,7 @@ export function ReportBadge({
         // Loading Rating
         <RatingLoadingIcon
           size={RatingIconSize.micro}
-          className="cursor-pointer"
+          className="ng-cursor-pointer"
         />
       ) : (
         // Known Rating
@@ -113,7 +109,7 @@ export function ReportBadge({
           */
           onClickOverride={() => {}}
           size={RatingIconSize.micro}
-          className={"cursor-pointer"}
+          className="ng-cursor-pointer"
           hadLoadingError={hadLoadingError}
         />
       )}
