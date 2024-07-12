@@ -131,7 +131,7 @@ export interface FakeEthNameCheckResult {
    *
    * `null` if `status` is any value except `authentic_eth_name`, `invalid_eth_name` and `unknown_eth_name` (the NFT is not associated with authentic ".eth" contracts)
    */
-  nameguard_result: NameGuardReport | UninspectedNameGuardReport | null;
+  nameguard_result: NameGuardReport | null;
 
   /**
    * Fields with values from Alchemy response which are investigated (e.g. title, collection name, metadata) whether they look like fake .eth ENS name.
@@ -400,7 +400,7 @@ export interface AbstractNameGuardReport extends ConsolidatedNameGuardReport {
   canonical_name?: string;
 }
 
-export interface NameGuardReport extends AbstractNameGuardReport {
+export interface InspectedNameGuardReport extends AbstractNameGuardReport {
     labels: LabelGuardReport[];
 }
 
@@ -408,6 +408,8 @@ export interface UninspectedNameGuardReport extends AbstractNameGuardReport {
     labels: undefined;
     canonical_name: undefined;
 }
+
+type NameGuardReport = InspectedNameGuardReport | UninspectedNameGuardReport;
 
 export interface BulkConsolidatedNameGuardReport {
   results: ConsolidatedNameGuardReport[];
@@ -445,7 +447,7 @@ export interface SecurePrimaryNameResult {
    *
    * `null` if `primary_name_status` is `no_primary_name` (primary name is not found).
    */
-  nameguard_result: NameGuardReport | UninspectedNameGuardReport | null;
+  nameguard_result: NameGuardReport | null;
 }
 
 // TODO: Let's apply more formalization to this error class.
@@ -507,7 +509,7 @@ class NameGuard {
   }
 
   /**
-   * Inspects a single name with NameGuard. If the `name` is uninspected returns `UninspectedNameGuardReport`; else returns a `NameGuardReport` including:
+   * Inspects a single name with NameGuard. If the `name` is uninspected returns `UninspectedNameGuardReport`; else returns a `InspectedNameGuardReport` including:
    *   1. The details of all checks performed on `name` that consolidates all checks performed on labels and graphemes in `name`.
    *   2. The details of all labels in `name`.
    *   3. A consolidated inspection result of all graphemes in `name`.
@@ -517,14 +519,14 @@ class NameGuard {
    *
    * @param {string} name The name for NameGuard to inspect.
    * @param {InspectNameOptions} options The options for the inspection.
-   * @returns {Promise<NameGuardReport | UninspectedNameGuardReport>} A promise that resolves with the `NameGuardReport` of the name.
+   * @returns {Promise<NameGuardReport>} A promise that resolves with the `NameGuardReport` of the name.
    * @example
    * const nameGuardReport = await nameguard.inspectName('vitalik.eth');
    */
   public inspectName(
     name: string,
     options?: InspectNameOptions
-  ): Promise<NameGuardReport | UninspectedNameGuardReport> {
+  ): Promise<NameGuardReport> {
     const network_name = options?.network || this.network;
 
     return this.rawRequest("inspect-name", "POST", { name, network_name });
@@ -576,12 +578,12 @@ class NameGuard {
    *
    * @param {string} namehash A namehash should be a decimal or a hex (prefixed with 0x) string.
    * @param {InspectNamehashOptions} options The options for the inspection.
-   * @returns {Promise<NameGuardReport | UninspectedNameGuardReport>}  A promise that resolves with a `NameGuardReport` of the resolved name.
+   * @returns {Promise<NameGuardReport>}  A promise that resolves with a `NameGuardReport` of the resolved name.
    */
   public async inspectNamehash(
     namehash: string,
     options?: InspectNamehashOptions
-  ): Promise<NameGuardReport | UninspectedNameGuardReport> {
+  ): Promise<NameGuardReport> {
     if (!isKeccak256Hash(namehash)) {
       throw new Error("Invalid Keccak256 hash format for namehash.");
     }
@@ -633,12 +635,12 @@ class NameGuard {
    *
    * @param {string} labelhash A labelhash should be a decimal or a hex (prefixed with 0x) string.
    * @param {InspectLabelhashOptions} options The options for the inspection.
-   * @returns {Promise<NameGuardReport | UninspectedNameGuardReport>}  A promise that resolves with a `NameGuardReport` of the resolved name.
+   * @returns {Promise<NameGuardReport>}  A promise that resolves with a `NameGuardReport` of the resolved name.
    */
   public async inspectLabelhash(
     labelhash: string,
     options?: InspectLabelhashOptions
-  ): Promise<NameGuardReport | UninspectedNameGuardReport> {
+  ): Promise<NameGuardReport> {
     if (!isKeccak256Hash(labelhash)) {
       throw new Error("Invalid Keccak256 hash format for labelhash.");
     }
