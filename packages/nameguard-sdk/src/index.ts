@@ -409,7 +409,7 @@ export interface UninspectedNameGuardReport extends AbstractNameGuardReport {
     canonical_name: undefined;
 }
 
-type NameGuardReport = InspectedNameGuardReport | UninspectedNameGuardReport;
+export type NameGuardReport = InspectedNameGuardReport | UninspectedNameGuardReport;
 
 export interface BulkConsolidatedNameGuardReport {
   results: ConsolidatedNameGuardReport[];
