@@ -13,7 +13,8 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "sideEffects": false,
   "scripts": {
@@ -28,6 +29,7 @@
     "vitest": "1.4.0"
   },
   "dependencies": {
+    "@namehash/ens-utils": "workspace:*",
     "whatwg-fetch": "3.6.19"
   },
   "publishConfig": {
