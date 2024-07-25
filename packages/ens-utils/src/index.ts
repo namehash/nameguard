@@ -11,3 +11,15 @@ export * from "./number";
 export * from "./price";
 export * from "./time";
 export * from "./transaction";
+export * from "./domain";
+export * from "./registration";
+
+declare global {
+  interface BigInt {
+    toJSON: () => string;
+  }
+}
+
+BigInt.prototype.toJSON = function () {
+  return this.toString();
+};
