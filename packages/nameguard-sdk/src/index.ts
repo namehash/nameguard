@@ -66,7 +66,10 @@ export type CheckType =
 
   // Name-level checks
   | "impersonation_risk" /** A name might be used for impersonation. */
-  | "punycode_compatible_name" /** A name is compatible with Punycode. */;
+  | "punycode_compatible_name" /** A name is compatible with Punycode. */
+  | "namewrapper_fuses" /** The NameWrapper configuration of a name is safe. */
+  | "decentralized_name" /** A name is decentralized. */
+  | "uninspected" /** A name was exceptionally long and was not inspected for performance reasons */;
 
 /** The resulting status code of a check that NameGuard performed. */
 export enum CheckResultCode {
@@ -100,7 +103,8 @@ export enum Rating {
 export type SecurePrimaryNameStatus =
   | "normalized" /** The ENS primary name was found and it is normalized. */
   | "no_primary_name" /** The ENS primary name was not found. */
-  | "unnormalized" /** The ENS primary name was found, but it is not normalized. */;
+  | "unnormalized" /** The ENS primary name was found, but it is not normalized. */
+  | "uninspected" /** A name was exceptionally long and was not inspected for performance reasons */;
 
 export type ImpersonationStatus =
   | "unlikely" /** The name is unlikely to be impersonating. */
@@ -365,24 +369,30 @@ export interface ConsolidatedNameGuardReport extends ConsolidatedReport {
   /* The ENSIP-15 normalization status of `name` */
   normalization: Normalization;
 
-  /** Beautified version of `name` */
+  /* Beautified version of `name` */
   beautiful_name: string;
+
+  /* Whether or not the name was inspected. */
+  inspected: boolean;
 }
 
 /**
  * NameGuard report that contains the full results of all `checks` on all `labels` in a name.
  */
-export interface NameGuardReport extends ConsolidatedNameGuardReport {
+export interface AbstractNameGuardReport extends ConsolidatedNameGuardReport {
   /* The results of all checks performed by NameGuard on `name`. */
   checks: CheckResult[];
 
-  /** Details of the inspection of all labels in `name`. */
-  labels: LabelGuardReport[];
+  /** Details of the inspection of all labels in `name`.
+    *
+    * `undefined` if `name` was uninspected and this is an `UninspectedNameGuardReport`.
+  */
+  labels?: LabelGuardReport[];
 
   /**
    * The name considered to be the canonical form of the analyzed `name`.
    *
-   * `null` if and only if the canonical form of `name` is considered to be undefined.
+   * `undefined` if and only if the canonical form of `name` is considered to be undefined or `name` was uninspected and this is an ``UninspectedNameGuardReport`.
    *
    * If a label is represented as `[labelhash]` in `name`,
    * the `canonical_name` will also contain the label represented as `[labelhash]`.
@@ -390,8 +400,25 @@ export interface NameGuardReport extends ConsolidatedNameGuardReport {
    * `canonical_name` is guaranteed to be normalized with the exception of the case
    * where `normalization` is `unknown` and one or more labels are represented as `[labelhash]`.
    */
-  canonical_name: string | null;
+  canonical_name?: string;
 }
+
+export interface InspectedNameGuardReport extends AbstractNameGuardReport {
+    labels: LabelGuardReport[];
+    inspected: true;
+}
+
+/**
+ * NameGuard report for a name that was exceptionally long and was not inspected for performance reasons.
+ * Fields `label` and canonical_name` are undefined, `rating` is `alert`, `highest_risk` is `uninspected`, `risk_count` is `1`.
+ */
+export interface UninspectedNameGuardReport extends AbstractNameGuardReport {
+    labels: undefined;
+    canonical_name: undefined;
+    inspected: false;
+}
+
+export type NameGuardReport = InspectedNameGuardReport | UninspectedNameGuardReport;
 
 export interface BulkConsolidatedNameGuardReport {
   results: ConsolidatedNameGuardReport[];
@@ -448,6 +475,8 @@ const DEFAULT_NETWORK: Network = "mainnet";
 const DEFAULT_INSPECT_LABELHASH_PARENT = ETH_TLD;
 export const DEFAULT_COMPUTE_NAMEGUARD_REPORT = false;
 const MAX_BULK_INSPECTION_NAMES = 250;
+export const MAX_INSPECTED_NAME_CHARACTERS = 200;  // includes label separators
+const MAX_INSPECTED_NAME_UNKNOWN_LABELS = 5;
 
 export interface NameGuardOptions {
   endpoint?: string;
@@ -490,7 +519,7 @@ export class NameGuard {
   }
 
   /**
-   * Inspects a single name with NameGuard. Provides a `NameGuardReport` including:
+   * Inspects a single name with NameGuard. If the `name` is uninspected returns `UninspectedNameGuardReport`; else returns a `InspectedNameGuardReport` including:
    *   1. The details of all checks performed on `name` that consolidates all checks performed on labels and graphemes in `name`.
    *   2. The details of all labels in `name`.
    *   3. A consolidated inspection result of all graphemes in `name`.
@@ -515,7 +544,7 @@ export class NameGuard {
 
   // TODO: Document how this API will attempt automated labelhash resolution through the ENS Subgraph.
   /**
-   * Inspects up to 250 names at a time with NameGuard. Provides a `ConsolidatedNameGuardReport` for each name provided in `names`, including:
+   * Inspects up to 250 names at a time with NameGuard. Provides `UninspectedNameGuardReport` if the `name` is uninspected; else returns a `ConsolidatedNameGuardReport` for each name provided in `names`, including:
    *   1. The details of all checks performed on a name that consolidates all checks performed on labels and graphemes in this name.
    *
    * Each `ConsolidatedNameGuardReport` returned represents an equivalent set of checks as a `NameGuardReport`. However:
@@ -554,7 +583,7 @@ export class NameGuard {
    * Inspects the name associated with a namehash.
    *
    * NameGuard will attempt to resolve the name associated with the namehash through the ENS Subgraph.
-   * If this resolution succeeds then NameGuard will generate and return a `NameGuardReport` for the name.
+   * If this resolution succeeds then NameGuard will return a `NameGuardReport` for the name. If the resolved `name` is uninspected then NameGuard will return `UninspectedNameGuardReport`.
    * If this resolution fails then NameGuard will return an error.
    *
    * @param {string} namehash A namehash should be a decimal or a hex (prefixed with 0x) string.
@@ -600,6 +629,8 @@ export class NameGuard {
    * This is a convenience function to generate a `NameGuardReport` in cases when you only have:
    *   1. The labelhash of the "childmost" label of a name.
    *   2. The complete parent name of the "childmost" label.
+   *
+   * Returns `UninspectedNameGuardReport` if the resolved `name` is uninspected.
    *
    * NameGuard always inspects names, rather than labelhashes. So this function will first attempt
    * to resolve the "childmost" label associated with the provided labelhash through the ENS Subgraph,

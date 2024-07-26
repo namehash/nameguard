@@ -1,10 +1,11 @@
-from typing import Optional
+from typing import Optional, Union, Literal
 from pydantic import BaseModel, Field, computed_field, field_serializer
 from enum import Enum
 from ens_normalize import ens_beautify
 
 from nameguard.context import endpoint_name
-from nameguard.models.checks import GenericCheckResult, Rating, Check
+from nameguard.models.checks import GenericCheckResult, Rating, Check, UNINSPECTED_CHECK_RESULT
+
 from nameguard.utils import detect_grapheme_link_name
 from nameguard.endpoints import Endpoints
 
@@ -212,6 +213,11 @@ class ConsolidatedNameGuardReport(ConsolidatedReport):
 
     normalization: Normalization
 
+    inspected: bool = Field(
+        description='Whether the name was inspected.',
+        examples=[True],
+    )
+
     @computed_field(description='Beautified version of `name`.')
     @property
     def beautiful_name(self) -> Optional[str]:
@@ -235,16 +241,36 @@ class NameGuardReport(ConsolidatedNameGuardReport):
         description='A list of checks that were performed on the name.',
     )
 
-    labels: list[LabelGuardReport] = Field(
-        description='The analyzed labels of the name.',
+    labels: Optional[list[LabelGuardReport]] = Field(
+        description='The analyzed labels of the name.\n' '* `null` if name is uninspected',
     )
 
     canonical_name: Optional[str] = Field(
         description='The canonical form of the analyzed name.\n'
-        '* `null` if the canonical form of any label is not known\n'
+        '* `null` if the canonical form of any label is not known or name is uninspected\n'
         '* `can contain labelhashes when some labels are unknown`',
         examples=['vitalik.eth'],
     )
+
+    inspected: Literal[True] = Field(
+        description='Whether the name was inspected.',
+        examples=[True],
+    )
+
+
+class UninspectedNameGuardReport(NameGuardReport):
+    """
+    Uninspected name analysis result without information about checks and labels.
+    """
+
+    risk_count: Literal[1] = Field(description='The number of checks that have a status of `alert` or `warn`.')
+    rating: Literal[Rating.ALERT]
+    highest_risk: Literal[UNINSPECTED_CHECK_RESULT] = Field(
+        description='The check considered to be the highest risk. If no check has a status of `alert` or `warn`, this field is `null`.',
+    )
+    labels: Literal[None]
+    canonical_name: Literal[None]
+    inspected: Literal[False]
 
 
 class BulkNameGuardBulkReport(BaseModel):
@@ -309,11 +335,13 @@ class SecurePrimaryNameStatus(str, Enum):
     * `normalized`: The ENS primary name was found and it is normalized.
     * `no_primary_name`: The ENS primary name was not found.
     * `unnormalized`: The ENS primary name was found, but it is not normalized.
+    * `uninspected`: The name was exceptionally long and was not inspected for performance reasons.
     """
 
     NORMALIZED = 'normalized'
     NO_PRIMARY_NAME = 'no_primary_name'
     UNNORMALIZED = 'unnormalized'
+    UNINSPECTED = 'uninspected'
 
 
 class ImpersonationStatus(str, Enum):
@@ -351,7 +379,7 @@ class SecurePrimaryNameResult(BaseModel):
         examples=['vitalik.eth'],
     )
 
-    nameguard_result: Optional[NameGuardReport] = Field(
+    nameguard_result: Optional[Union[NameGuardReport, ConsolidatedNameGuardReport]] = Field(
         description='NameGuard report for the `primary_name`.\n'
         '* `null` if `primary_name_status` is `no_primary_name` (primary name is not found)'
     )
@@ -385,9 +413,10 @@ class FakeEthNameCheckResult(BaseModel):
 
     status: FakeEthNameCheckStatus
 
-    nameguard_result: Optional[NameGuardReport] = Field(
+    nameguard_result: Optional[Union[NameGuardReport, UninspectedNameGuardReport]] = Field(
         description='NameGuard report for the .eth ENS NFT.\n'
-        '* `null` if `status` is any value except `authentic_eth_name`, `invalid_eth_name` and `unknown_eth_name` (the NFT is not associated with authentic ".eth" contracts)'
+        '* `null` if `status` is any value except `authentic_eth_name`, `invalid_eth_name` and `unknown_eth_name` (the NFT is not associated with authentic ".eth" contracts)\n'
+        '* `UninspectedNameGuardReport` if name is uninspected'
     )
 
     investigated_fields: Optional[dict[str, str]] = Field(

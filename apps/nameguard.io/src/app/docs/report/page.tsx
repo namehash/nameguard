@@ -395,6 +395,7 @@ const getExampleReportData = (rating: Rating): ConsolidatedNameGuardReport => {
         title: "Looks Good",
         subtitle: "All security checks passed!",
         beautiful_name: "lightwalker.eth",
+        inspected: true,
       };
     case Rating.warn:
       return {
@@ -413,6 +414,7 @@ const getExampleReportData = (rating: Rating): ConsolidatedNameGuardReport => {
         title: "Some Risk",
         subtitle: "Review risks before proceeding",
         beautiful_name: "thisìsaveryveryveryveryveryverylongname.eth",
+        inspected: true,
       };
     case Rating.alert:
       return {
@@ -431,6 +433,7 @@ const getExampleReportData = (rating: Rating): ConsolidatedNameGuardReport => {
         title: "High Risk",
         subtitle: "Better not to use this name",
         beautiful_name: "",
+        inspected: true,
       };
   }
 };
