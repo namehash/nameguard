@@ -7,7 +7,6 @@ import {
 } from "@namehash/nameguard";
 import cc from "classcat";
 import { ENSName } from "@namehash/ens-utils";
-
 import { Tooltip } from "../Tooltip/Tooltip";
 import { RatingLoadingIcon } from "../icons/RatingLoadingIcon";
 import { RatingIcon, RatingIconSize } from "../Report/RatingIcon";

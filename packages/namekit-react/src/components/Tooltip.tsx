@@ -25,7 +25,7 @@ export function Tooltip({
   const handleClose = () => setOpen(false);
 
   return (
-    <Popover className="ng-flex ng-items-center ng-justify-center">
+    <Popover className="nk-flex nk-items-center nk-justify-center">
       <Float
         show={open}
         placement={placement}
@@ -34,19 +34,19 @@ export function Tooltip({
         flip={10}
         arrow
         portal
-        enter="ng-transition ng-duration-200 ng-ease-out"
-        enterFrom="ng-opacity-0 ng--translate-y-1"
-        enterTo="ng-opacity-100 ng-translate-y-0"
-        leave="ng-transition ng-duration-150 ng-ease-in"
-        leaveFrom="ng-opacity-100 ng-translate-y-0"
-        leaveTo="ng-opacity-0 ng--translate-y-1"
+        enter="nk-transition nk-duration-200 nk-ease-out"
+        enterFrom="nk-opacity-0 nk--translate-y-1"
+        enterTo="nk-opacity-100 nk-translate-y-0"
+        leave="nk-transition nk-duration-150 nk-ease-in"
+        leaveFrom="nk-opacity-100 nk-translate-y-0"
+        leaveTo="nk-opacity-0 nk--translate-y-1"
         {...props}
       >
         <Popover.Group
           onClick={handleOpen}
           onMouseEnter={handleOpen}
           onMouseLeave={handleClose}
-          className="ng-cursor-auto"
+          className="nk-cursor-auto"
         >
           {trigger}
         </Popover.Group>
@@ -54,10 +54,10 @@ export function Tooltip({
         <Popover.Panel
           onMouseEnter={handleOpen}
           onMouseLeave={handleClose}
-          className="ng-rounded-md ng-bg-black focus:ng-outline-none"
+          className="nk-rounded-md nk-bg-black focus:nk-outline-none"
         >
-          <Float.Arrow className="ng-absolute ng-h-5 ng-w-5 ng-rotate-45 ng-bg-black ng-rounded-b" />
-          <div className="ng-relative ng-h-full ng-rounded-md ng-text-sm ng-font-medium ng-text-white ng-py-2 ng-px-4">
+          <Float.Arrow className="nk-absolute nk-h-5 nk-w-5 nk-rotate-45 nk-bg-black nk-rounded-b" />
+          <div className="nk-relative nk-h-full nk-rounded-md nk-text-sm nk-font-medium nk-text-white nk-py-2 nk-px-4">
             {children}
           </div>
         </Popover.Panel>

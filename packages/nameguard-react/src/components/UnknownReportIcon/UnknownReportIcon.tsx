@@ -1,7 +1,6 @@
 import React from "react";
-
-import { RatingIconSize } from "../Report/RatingIcon";
 import { Tooltip } from "../Tooltip/Tooltip";
+import { RatingIconSize } from "../Report/RatingIcon";
 import { RatingUnknownIcon } from "../icons/RatingUnknownIcon";
 
 type UnknownShieldProps = {
