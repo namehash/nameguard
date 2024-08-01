@@ -1,5 +1,11 @@
 # @namehash/namekit-react
 
+## 0.5.0
+
+### Minor Changes
+
+- 0156515: Update tsconfig.json
+
 ## 0.4.1
 
 ### Patch Changes

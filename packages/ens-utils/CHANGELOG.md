@@ -1,5 +1,12 @@
 # @namehash/ens-utils
 
+## 1.16.0
+
+### Minor Changes
+
+- 0156515: Update tsconfig.json
+- ef3837d: Removed Normalization enum from @namehash/nameguard so unique source of this is @namehash/ens-utils
+
 ## 1.15.1
 
 ### Patch Changes
