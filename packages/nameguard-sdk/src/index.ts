@@ -1,21 +1,8 @@
 import fetch from "cross-fetch";
+import { Normalization } from "@namehash/ens-utils";
 import { isEthereumAddress, isTokenId, isKeccak256Hash } from "./utils";
 
 const ETH_TLD = "eth";
-
-/**
- * The ENSIP-15 normalization status of a name/label.
- *
- * If a label is in the format "[labelhash]" then the `Normalization` of the label is considered to be `unknown`.
- * If a name contains any label that is `unnormalized` then the `Normalization` of the entire name is considered to be `unnormalized`.
- * If a name contains no `unnormalized` labels but 1 or more `unknown` labels then the entire name is considered to be `unknown`.
- * A name is `normalized` if and only if all of its labels are `normalized`.
- */
-export enum Normalization {
-  normalized = "normalized" /** `normalized`: The name or label is normalized. */,
-  unnormalized = "unnormalized" /** `unnormalized`: The name or label is not normalized. */,
-  unknown = "unknown" /** `unknown`: The name or label is unknown because it cannot be looked up from its hash. */,
-}
 
 /**
  * The ENSIP-15 normalization status of a grapheme.
@@ -332,7 +319,7 @@ export interface LabelGuardReport extends ConsolidatedReport {
   /**
    * A list of `ConsolidatedGraphemeGuardReport` values for each grapheme contained within `label`.
    *
-   * `null` if and only if `normalization` is `unknown`.
+   * `null` if and only if `normalization` is `Normalization.Unknown`.
    */
   graphemes: ConsolidatedGraphemeGuardReport[] | null;
 
@@ -343,7 +330,7 @@ export interface LabelGuardReport extends ConsolidatedReport {
    *
    * If not `null`, it is guaranteed that the `canonical_label` is normalized.
    *
-   * If `normalization` is `unknown`, then `canonical_label` will be `[labelhash]`.
+   * If `normalization` is `Normalization.Unknown`, then `canonical_label` will be `[labelhash]`.
    */
   canonical_label: string | null;
 }
@@ -395,7 +382,7 @@ export interface NameGuardReport extends ConsolidatedNameGuardReport {
    * the `canonical_name` will also contain the label represented as `[labelhash]`.
    *
    * `canonical_name` is guaranteed to be normalized with the exception of the case
-   * where `normalization` is `unknown` and one or more labels are represented as `[labelhash]`.
+   * where `normalization` is `Normalization.Unknown` and one or more labels are represented as `[labelhash]`.
    */
   canonical_name: string | null;
 }
@@ -434,7 +421,8 @@ export interface SecurePrimaryNameResult {
   /**
    * NameGuard report for the `primary_name`.
    *
-   * `null` if `primary_name_status` is `no_primary_name` (primary name is not found).
+   * * `null` if `primary_name_status` is `no_primary_name` (primary name is not found)
+   * * `null` if `SecurePrimaryNameOptions.computeNameGuardReport` is `false` or not provided
    */
   nameguard_result: NameGuardReport | null;
 }
@@ -452,44 +440,44 @@ class NameGuardError extends Error {
 const DEFAULT_ENDPOINT = "https://api.nameguard.io";
 const DEFAULT_NETWORK: Network = "mainnet";
 const DEFAULT_INSPECT_LABELHASH_PARENT = ETH_TLD;
+export const DEFAULT_COMPUTE_NAMEGUARD_REPORT = false;
 const MAX_BULK_INSPECTION_NAMES = 250;
 
-interface NameGuardOptions {
+export interface NameGuardOptions {
   endpoint?: string;
   network?: Network;
 }
 
 interface InspectNameOptions {
-  network?: Network;
 }
 
 interface InspectNamehashOptions {
-  network?: Network;
 }
 
 interface InspectLabelhashOptions {
-  network?: Network;
   parent?: string;
 }
 
-interface SecurePrimaryNameOptions {
-  network?: Network;
+export interface SecurePrimaryNameOptions {
+  computeNameGuardReport?: boolean;
 }
 
 interface FakeEthNameOptions {
-  network?: Network;
 }
 
 interface FieldsWithRequiredTitle extends Record<string, string> {
   title: string;
 }
 
-class NameGuard {
+export class NameGuard {
   private endpoint: URL;
-  private network: Network;
+  protected network: Network;
   private abortController: AbortController;
 
-  constructor({ endpoint = DEFAULT_ENDPOINT, network = DEFAULT_NETWORK } = {}) {
+  constructor({
+    endpoint = DEFAULT_ENDPOINT,
+    network = DEFAULT_NETWORK,
+  }: NameGuardOptions = {}) {
     this.endpoint = new URL(endpoint);
     this.network = network;
     this.abortController = new AbortController();
@@ -502,7 +490,7 @@ class NameGuard {
    *   3. A consolidated inspection result of all graphemes in `name`.
    *
    * This function will attempt automated labelhash resolution through the ENS Subgraph,
-   * using the network specified in `options.network_name`.
+   * using the network specified in the NameGuard instance.
    *
    * @param {string} name The name for NameGuard to inspect.
    * @param {InspectNameOptions} options The options for the inspection.
@@ -514,7 +502,7 @@ class NameGuard {
     name: string,
     options?: InspectNameOptions,
   ): Promise<NameGuardReport> {
-    const network_name = options?.network || this.network;
+    const network_name = this.network;
 
     return this.rawRequest("inspect-name", "POST", { name, network_name });
   }
@@ -530,7 +518,7 @@ class NameGuard {
    *      are possible (and completely safe) that help to accelerate responses in many cases.
    *
    * This function will attempt automated labelhash resolution through the ENS Subgraph,
-   * using the network specified in `options.network_name`.
+   * using the network specified in the NameGuard instance.
    *
    * @param {string[]} names The list of names for NameGuard to inspect.
    * @param {InspectNameOptions} options The options for the inspection.
@@ -546,7 +534,7 @@ class NameGuard {
       );
     }
 
-    const network_name = options?.network || this.network;
+    const network_name = this.network;
 
     return this.rawRequest("bulk-inspect-names", "POST", {
       names,
@@ -575,7 +563,7 @@ class NameGuard {
       throw new Error("Invalid Keccak256 hash format for namehash.");
     }
 
-    const network = options?.network || this.network;
+    const network = this.network;
 
     const url = new URL(
       `inspect-namehash/${network}/${namehash}`,
@@ -609,7 +597,7 @@ class NameGuard {
    *
    * NameGuard always inspects names, rather than labelhashes. So this function will first attempt
    * to resolve the "childmost" label associated with the provided labelhash through the ENS Subgraph,
-   * using the network specified in `options.network_name`.
+   * using the network specified in the NameGuard instance.
    *
    * If this label resolution fails the resulting `NameGuardReport` will be equivalent to requesting
    * a `NameGuardReport` for the name "[{labelhash}].{parent}" which will contain (at least) one label
@@ -664,7 +652,7 @@ class NameGuard {
    * @param {SecurePrimaryNameOptions} options The options for the secure primary name.
    * @returns {Promise<SecurePrimaryNameResult>} A promise that resolves with a `SecurePrimaryNameResult`.
    */
-  public getSecurePrimaryName(
+  public async getSecurePrimaryName(
     address: string,
     options?: SecurePrimaryNameOptions,
   ): Promise<SecurePrimaryNameResult> {
@@ -674,9 +662,17 @@ class NameGuard {
       );
     }
 
-    const network_name = options?.network || this.network;
+    const network_name = this.network;
+    const computeNameGuardReport = options?.computeNameGuardReport || DEFAULT_COMPUTE_NAMEGUARD_REPORT;
 
-    return this.rawRequest(`secure-primary-name/${network_name}/${address}`);
+    // TODO: We need to add a `computeNameGuardReport` parameter to the API.
+    let response = await this.rawRequest(`secure-primary-name/${network_name}/${address}`);
+
+    if (!computeNameGuardReport) {
+      response.nameguard_result = null;
+    }
+
+    return response;
   }
 
   /**
@@ -714,7 +710,7 @@ class NameGuard {
       );
     }
 
-    const network_name = options?.network || this.network;
+    const network_name = this.network;
 
     return this.rawRequest("fake-eth-name-check", "POST", {
       network_name,
